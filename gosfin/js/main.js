@@ -5968,6 +5968,7 @@ function() {
             i.trigger("next.owl.carousel")
         }), $(".bg4 .calc .gocalc").on("click", function(t) {
             t.preventDefault();
+            document.getElementById('showPrice').style.display = 'block';
             var n = parseInt($(this).closest("form").find("#amount").val()),
                 i = parseInt($(this).closest("form").find("#amount2").val()),
                 r = Math.round(n * i / 12 * .015),
