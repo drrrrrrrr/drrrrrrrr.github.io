@@ -55,7 +55,7 @@
     <main>
         <div id="info"></div>
         <div id="downloadInfo">Нажмите загрузить для загрузки профиля</div>
-
+        <div id="loader"></div>
         <div id="mynetwork"></div>
     </main>
     <footer class="mastfoot">
@@ -77,7 +77,6 @@
             }
             document.getElementById('downloadInfo').style.display = 'none';
             createGraph(nodes,edges);
-            console.log('ssss');
             return true;
         }
 
@@ -88,6 +87,7 @@
             document.getElementById('downloadInfo').style.display = 'none';
             let nodes = JSON.parse(localStorage.getItem('nodes'));
             let edges = JSON.parse(localStorage.getItem('edges'));
+            let users = JSON.parse(localStorage.getItem('users'));
             let info = document.getElementById('info');
             if(!nodes || !edges) {
                 info.innerText = 'сначала нужно загрузить данные';
@@ -96,9 +96,9 @@
             //from 10 to 20
             //nodes nodes.push({id:x['id'],shape:'circularImage',image: x['photo_50'], label:x['first_name'] + x['last_name']});
             let answer = [];
-            nodes.forEach(x=> {
-                let ar = edges.filter(y=> y.from === x['id'])
-                answer.push({name: x['label'], count: ar.length});
+            users.forEach(x=> {
+                if(x !== 'no')
+                answer.push({name:x['first_name'] + " " + x['last_name'], count: x['common'].length});
             })
             answer.sort((x,y)=> y.count - x.count);
             let source   = document.getElementById("entry-template").innerHTML;
@@ -151,7 +151,7 @@
         };
         var options = {
             nodes: {
-                borderWidth:4,
+                borderWidth:2,
                 size:30,
                 color: {
                     border: '#222222',
@@ -163,7 +163,16 @@
                 color: 'black'
             }
         };
-        network = new vis.Network(container, data, options);
+        setTimeout(function () {
+            let loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            new Promise(res => {
+                setTimeout(function () {
+                    network = new vis.Network(container, data, options);
+                    res();
+                },5);
+            }).then(()=> {loader.style.display = 'none'; });
+        },0);
     }
     function uploadGraph() {
         // document.getElementById('mynetwork').style.display = 'block';
@@ -232,6 +241,7 @@
         }).then((users) => {
             let nodes = [];
             let index = 0;
+            let commonCities = new Map();
             users.forEach((x) => {
                 if(x !== 'no') {
                     nodes.push({
@@ -240,17 +250,36 @@
                         image: x['photo_50'],
                         label: x['first_name'] + " " + x['last_name']
                     });
+                    if(x['city']) {
+                        if(commonCities.has(x['city']['title'])) {
+                            commonCities.set(x['city']['title'],commonCities.get(x['city']['title']).concat(x['id']))
+                        } else  {
+                            commonCities.set(x['city']['title'], [x['id']] )
+                        }
+                    }
                 }
             })
             edges = [];
-            for(let i =0; i< users.length-1; i++) {
-                if(users[i] !== 'no') {
-                    edges.push({from: users[i]['id'], to:users[i+1]['id']});
+            let cities = Array.from(commonCities.keys());
+            for(let i =0; i< cities.length ; i++) {
+                let currentCititesId = commonCities.get(cities[i]);
+
+                nodes.push({
+                    id: i,
+                    label: cities[i],
+                    image: 'https://i.gifer.com/XPFZ.gif',
+                    shape: 'circularImage'
+                });
+                for (let m = 0 ; m < currentCititesId.length ; m++ ){
+                    if(m + 1 < currentCititesId.length) {
+                        edges.push({from: currentCititesId[m], to: currentCititesId[m + 1]});
+                    }
+                    edges.push({from: i, to:currentCititesId[m]});
                 }
             }
             localStorage.setItem('nodes',JSON.stringify(nodes));
             localStorage.setItem('edges',JSON.stringify(edges));
-            // localStorage.setItem('sities')
+            localStorage.setItem('users',JSON.stringify(users));
             createGraph(nodes ,edges);
             document.getElementById('downloadInfo').style.display = 'none';
         }).catch((e)=>console.log(e));

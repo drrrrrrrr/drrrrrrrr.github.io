@@ -17,13 +17,20 @@
 main {
     /*order: 1;*/
 }
-footer {
+.mastfoot {
     background: black;
     height: 100px;
     color: white;
     text-align: center;
     text-transform: uppercase;
     line-height: 100px;
+}
+#loader {
+    width: 800px;
+    height: 800px;
+    margin: 0 auto;
+    background: url("https://www.rugman.com/assets/images/30.gif") center center;
+    display: none;
 }
 /*a,*/
 /*a:focus,*/
