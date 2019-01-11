@@ -5918,8 +5918,9 @@ function() {
                 $.mask.definitions[1] = "[0123456789]", $(".phone").mask("+7 (199) 999-99-99", {
                     placeholder: "_"
                 })
-            }), $(".contactform1").submit(function() {
-                return $(this).validationEngine("validate") && ($(this).ajaxSubmit(), yaCounter35040720.reachGoal($(this).closest("form").data("index")), $(this).clearForm(), $.arcticmodal("close"), $(".thanks").arcticmodal()), !1
+            }), $(".contactform1").submit(function(e) {
+                e.preventDefault();
+                return $(this).validationEngine("validate") && ($(this).ajaxSubmit(), $(this).clearForm(), $.arcticmodal("close"), $(".thanks").arcticmodal()), !1
             }), navigator.userAgent.match(/IEMobile\/10\.0/)) {
             var t = document.createElement("style");
             t.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")), document.querySelector("head").appendChild(t)
@@ -6048,17 +6049,17 @@ function() {
         //     $('.bg1').css('min-height', hei);
         // }
         
-        $(window).on('scroll', function(event) {
-            var heimenu = $(window).scrollTop();
-            if (heimenu>=$('.bgmenu').offset().top) {
-                console.log('sda');
-                $('.bgmenu .navbar').fadeIn(300);
-                $('.bgmenu .navbar').addClass('navbar-fixed-top');
-            } else {
-                console.log('sda2');
-                $('.bgmenu .navbar').fadeOut(150);
-            }
-        });
+        // $(window).on('scroll', function(event) {
+        //     var heimenu = $(window).scrollTop();
+        //     if (heimenu>=$('.bgmenu').offset().top) {
+        //         console.log('sda');
+        //         $('.bgmenu .navbar').fadeIn(300);
+        //         $('.bgmenu .navbar').addClass('navbar-fixed-top');
+        //     } else {
+        //         console.log('sda2');
+        //         $('.bgmenu .navbar').fadeOut(150);
+        //     }
+        // });
 
         $(".bgmenu a[href='#main']").click(function() {
             $('html, body').animate({
